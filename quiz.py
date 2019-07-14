@@ -20,16 +20,12 @@ mappings = {
 }
 
 
-def tokenize(s):
-    return tuple(re.findall(r'\w+', s))
-
-
-smappings = {tokenize(ans.lower()): prompt
+smappings = {''.join(prompt.lower().split()): prompt
              for prompt, ans in mappings.items()}
 
 
 def check(prompt, ans):
-    k = tokenize(ans.lower())
+    k = ''.join(prompt.lower().split())
     if k not in smappings:
         return False
     return smappings[k] == prompt
