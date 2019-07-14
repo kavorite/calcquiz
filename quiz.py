@@ -32,13 +32,12 @@ def check(prompt, ans):
 
 
 prompts = tuple()
-promptc = 0
-accuracy = 0
 while True:
     if len(prompts) == 0:
         prompts = tuple(mappings.keys())
         correct = set()
         accuracy = 0
+        promptc = 0
 
     i = randint(0, len(prompts)-1)
     prompt = prompts[i]
