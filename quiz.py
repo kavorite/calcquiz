@@ -1,6 +1,4 @@
 from random import randint
-from collections import Counter
-import re
 
 mappings = {
         '∫tan(u) du': 'ln|sec(u)| + C',
@@ -20,12 +18,12 @@ mappings = {
 }
 
 
-smappings = {''.join(prompt.lower().split()): prompt
+smappings = {''.join(ans.lower().split()): prompt
              for prompt, ans in mappings.items()}
 
 
 def check(prompt, ans):
-    k = ''.join(prompt.lower().split())
+    k = ''.join(ans.lower().split())
     if k not in smappings:
         return False
     return smappings[k] == prompt
@@ -37,19 +35,19 @@ while True:
         prompts = tuple(mappings.keys())
         correct = set()
         accuracy = 0
-        promptc = 0
+        n = 0
 
     i = randint(0, len(prompts)-1)
     prompt = prompts[i]
     ans = input(f'{prompt} = ')
-    promptc += 1
+    n += 1
     if check(prompt, ans):
         correct.add(prompt)
         prompts = tuple(prompts[:i]+prompts[i+1:])
         completion = int(100 * (1 - (len(prompts) / len(mappings))))
-        accuracy = ((promptc-1)*accuracy + 1) / promptc
+        accuracy = ((n-1)*accuracy + 1) / n
         prn_accuracy = int(100 * accuracy)
         print(f'correct (round {prn_accuracy}% accurate; {completion}% complete)')
     else:
-        accuracy = ((promptc-1)*accuracy) / promptc
+        accuracy = ((n-1)*accuracy) / n
         print(mappings[prompt])
