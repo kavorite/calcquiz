@@ -34,21 +34,19 @@ while True:
     if len(prompts) == 0:
         i = randint(0, len(mappings)-1)
         prompts = tuple(mappings.keys())
-        correct = set()
         accuracy = 0
         n = 0
 
+    i = randint(0, len(prompts)-1)
     prompt = prompts[i]
     ans = input(f'{prompt} = ')
     n += 1
     if check(prompt, ans):
-        correct.add(prompt)
         prompts = tuple(prompts[:i]+prompts[i+1:])
         completion = int(100 * (1 - (len(prompts) / len(mappings))))
         accuracy = ((n-1)*accuracy + 1) / n
         prn_accuracy = int(100 * accuracy)
         print(f'correct (round {prn_accuracy}% accurate; {completion}% complete)')
-        i = randint(0, len(prompts)-1)
     else:
         accuracy = ((n-1)*accuracy) / n
         print(mappings[prompt])
