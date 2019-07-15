@@ -1,5 +1,3 @@
-from random import randint, random as randf
-from collections import Counter, deque
 from vose import Vose
 
 class CMA(object):
@@ -45,27 +43,21 @@ def check(prompt, ans):
     return smappings[k] == prompt
 
 
-prompts = tuple()
+prompts = tuple(mappings.keys())
 accuracy = [CMA() for i in range(len(mappings))]
+total_accuracy = CMA()
 while True:
-    if len(prompts) == 0:
-        dice = Vose(*(cma.value() for cma in accuracy))
-        prompts = tuple(mappings.keys())
-        round_accuracy = CMA()
-        n = 0
-
+    dice = Vose(*(1-cma.value() for cma in accuracy))
     i = next(dice)
     prompt = prompts[i]
     ans = input(f'{prompt} = ')
-    n += 1
     if check(prompt, ans):
-        prompts = tuple(prompts[:i]+prompts[i+1:])
         completion = int(100 * (1 - (len(prompts) / len(mappings))))
         accuracy[i].update(1)
-        round_accuracy.update(1)
-        prn_accuracy = int(round_accuracy.value() * 100)
-        print(f'correct (round {prn_accuracy}% accurate; {completion}% complete)')
+        total_accuracy.update(1)
+        prn_accuracy = int(total_accuracy.value() * 100)
+        print(f'correct ({prn_accuracy}% accurate)')
     else:
         accuracy[i].update(0)
-        round_accuracy.update(0)
+        total_accuracy.update(0)
         print(mappings[prompt])
