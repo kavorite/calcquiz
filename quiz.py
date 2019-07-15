@@ -46,9 +46,14 @@ def check(prompt, ans):
 prompts = tuple(mappings.keys())
 accuracy = [CMA() for i in range(len(mappings))]
 total_accuracy = CMA()
+last_i = None
 while True:
     dice = Vose(*(1-cma.value() for cma in accuracy))
     i = next(dice)
+    if last_i is not None and i == last_i:
+        continue
+    else:
+        last_i = i
     prompt = prompts[i]
     ans = input(f'{prompt} = ')
     if check(prompt, ans):
