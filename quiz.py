@@ -1,4 +1,19 @@
-from random import randint
+from random import randint, random as randf
+from collections import Counter, deque
+from vose import Vose
+
+class CMA(object):
+    def __init__(self):
+        self._n = 0
+        self._value = 0
+
+    def update(self, x):
+        self._n += 1
+        self._value = ((self._n-1)*self._value + x) / self._n
+    
+    def value(self):
+        return self._value
+
 
 mappings = {
         '∫tan(u) du': 'ln|sec(u)| + C',
@@ -18,6 +33,7 @@ mappings = {
 }
 
 
+
 smappings = {''.join(ans.lower().split()): prompt
              for prompt, ans in mappings.items()}
 
@@ -30,23 +46,26 @@ def check(prompt, ans):
 
 
 prompts = tuple()
+accuracy = [CMA() for i in range(len(mappings))]
 while True:
     if len(prompts) == 0:
-        i = randint(0, len(mappings)-1)
+        dice = Vose(*(cma.value() for cma in accuracy))
         prompts = tuple(mappings.keys())
-        accuracy = 0
+        round_accuracy = CMA()
         n = 0
 
-    i = randint(0, len(prompts)-1)
+    i = next(dice)
     prompt = prompts[i]
     ans = input(f'{prompt} = ')
     n += 1
     if check(prompt, ans):
         prompts = tuple(prompts[:i]+prompts[i+1:])
         completion = int(100 * (1 - (len(prompts) / len(mappings))))
-        accuracy = ((n-1)*accuracy + 1) / n
-        prn_accuracy = int(100 * accuracy)
+        accuracy[i].update(1)
+        round_accuracy.update(1)
+        prn_accuracy = int(round_accuracy.value() * 100)
         print(f'correct (round {prn_accuracy}% accurate; {completion}% complete)')
     else:
-        accuracy = ((n-1)*accuracy) / n
+        accuracy[i].update(0)
+        round_accuracy.update(0)
         print(mappings[prompt])
